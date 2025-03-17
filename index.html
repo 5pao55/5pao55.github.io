@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Busca DBZ</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen">
+</head>
+<body> 
+
+<div class="container mt-4">
+    <h1 class="text-center">Dragon Ball Z - Busca de Personagens</h1>
+
+    <form onsubmit="buscadbz(event)">
+        <div class="mb-3">
+            <label for="nomedbz" class="form-label">Nome ou ID do Personagem:</label>
+            <input type="text" id="nomedbz" class="form-control" placeholder="Digite o nome ou ID" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Buscar</button>
+    </form>
+
+    <div class="result mt-4 text-center" id="resultado" style="display: none;">
+        <img src="" id="dbzvisao" alt="Imagem do personagem" class="img-fluid rounded mb-3" style="max-width: 300px;" />
+        <h3 id="nomePersonagem"></h3>
+        <p>ID: <span id="spanId">...</span></p>
+    </div>
+</div>
+
+<script>
+    async function buscadbz(event) {
+        event.preventDefault();
+        
+        const nomeOuId = document.getElementById('nomedbz').value.trim();
+        if (!nomeOuId) {
+            alert('Por favor, insira um nome ou ID.');
+            return;
+        }
+
+        const url = `https://dragonball-api.com/api/characters/${nomeOuId}`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Personagem não encontrado!');
+            }
+
+            const json = await response.json();
+            console.log(json);
+
+            document.getElementById("nomePersonagem").innerText = json.name || "Nome não disponível";
+            document.getElementById("spanId").innerText = json.id || "ID desconhecido";
+            document.getElementById("dbzvisao").src = json.image || "https://via.placeholder.com/300?text=Sem+Imagem";
+            document.getElementById("dbzvisao").alt = json.name || "Imagem do personagem";
+            document.getElementById("resultado").style.display = 'block';
+
+        } catch (error) {
+            console.error(error.message);
+            alert('Erro ao buscar personagem. Tente novamente.');
+        }
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
